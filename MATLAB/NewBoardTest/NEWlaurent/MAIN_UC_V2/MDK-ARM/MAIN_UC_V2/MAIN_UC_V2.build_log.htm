@@ -1,0 +1,98 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.38.0.0
+Copyright (C) 2022 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Mouhamed Zorkot, EPFL, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.38.0.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 (build 20)
+Assembler:       Armasm.exe V5.06 (build 20)
+Linker/Locator:  ArmLink.exe V5.06 (build 20)
+Library Manager: ArmAr.exe V5.06 (build 20)
+Hex Converter:   FromElf.exe V5.06 (build 20)
+CPU DLL:         SARMCM3.DLL V5.38.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.1.0.0
+Dialog DLL:      TCM.DLL V1.56.4.0
+ 
+<h2>Project:</h2>
+C:\Users\moham\OneDrive\Desktop\EPFL\Projetos\Electrostimulateur_16channels\Projet_ElectroStimulation\Matlab\NewBoardTest\NEWlaurent\MAIN_UC_V2\MDK-ARM\MAIN_UC_V2.uvprojx
+Project File Date:  02/19/2024
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 (build 20)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Rebuild target 'MAIN_UC_V2'
+assembling startup_stm32f303xc.s...
+compiling stm32f3xx_it.c...
+compiling MISC_function.c...
+compiling stm32f3xx_hal_msp.c...
+compiling system_stm32f3xx.c...
+compiling MASTER_COM_function.c...
+..\Src\MASTER_COM_function.c(198): warning:  #188-D: enumerated type mixed with another type
+  				CHANNEL_cmd(rxDataBuffer[(uint8_t)(FrameStartID+1)], rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x01, rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x02, rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x04);
+..\Src\MASTER_COM_function.c(198): warning:  #188-D: enumerated type mixed with another type
+  				CHANNEL_cmd(rxDataBuffer[(uint8_t)(FrameStartID+1)], rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x01, rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x02, rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x04);
+..\Src\MASTER_COM_function.c(198): warning:  #188-D: enumerated type mixed with another type
+  				CHANNEL_cmd(rxDataBuffer[(uint8_t)(FrameStartID+1)], rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x01, rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x02, rxDataBuffer[(uint8_t)(FrameStartID+2)]&0x04);
+..\Src\MASTER_COM_function.c(58): warning:  #177-D: variable "txDataBuffer0" was declared but never referenced
+  static uint8_t 						txDataBuffer0[TX_BUFFER_SIZE];
+..\Src\MASTER_COM_function.c(59): warning:  #177-D: variable "txDataBuffer1" was declared but never referenced
+  static uint8_t 						txDataBuffer1[TX_BUFFER_SIZE];
+..\Src\MASTER_COM_function.c(60): warning:  #177-D: variable "txBufferCnt" was declared but never referenced
+  static uint8_t						txBufferCnt 	= 0x00;
+..\Src\MASTER_COM_function.c(61): warning:  #177-D: variable "txBufferID" was declared but never referenced
+  static uint8_t						txBufferID 	  = 0x00;
+..\Src\MASTER_COM_function.c: 7 warnings, 0 errors
+compiling main.c...
+compiling CHANNEL_COM_function.c...
+compiling stm32f3xx_hal.c...
+compiling stm32f3xx_hal_tim_ex.c...
+compiling stm32f3xx_hal_rcc.c...
+compiling stm32f3xx_hal_tim.c...
+compiling stm32f3xx_hal_gpio.c...
+compiling stm32f3xx_hal_cortex.c...
+compiling stm32f3xx_hal_pwr.c...
+compiling stm32f3xx_hal_rcc_ex.c...
+compiling stm32f3xx_hal_i2c_ex.c...
+compiling stm32f3xx_hal_flash.c...
+compiling stm32f3xx_hal_pwr_ex.c...
+compiling stm32f3xx_hal_flash_ex.c...
+compiling stm32f3xx_hal_dma.c...
+compiling stm32f3xx_hal_uart.c...
+compiling stm32f3xx_hal_i2c.c...
+compiling stm32f3xx_hal_uart_ex.c...
+linking...
+Program Size: Code=14088 RO-data=480 RW-data=76 ZI-data=2572  
+FromELF: creating hex file...
+"MAIN_UC_V2\MAIN_UC_V2.axf" - 0 Error(s), 7 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.9.0.pack
+                ARM.CMSIS.5.9.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.6.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F3xx_DFP.2.2.2.pack
+                Keil.STM32F3xx_DFP.2.2.2
+                STMicroelectronics STM32F3 Series Device Support and Examples
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_MAIN_UC_V2
+  C:/Users/moham/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
+  C:/Users/moham/AppData/Local/Arm/Packs/Keil/STM32F3xx_DFP/2.2.2/Drivers/CMSIS/Device/ST/STM32F3xx/Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.6.0
+Build Time Elapsed:  00:00:09
+</pre>
+</body>
+</html>
