@@ -37,7 +37,7 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
     %     emg_data(interpulse_duration+t_artifact-15:interpulse_duration+t_artifact+15,:) = 0; % +/-15 seems like a lot to be blanked... I ll see later if this needs to be changed
     %     disp("BLANKED");
     % end
-    % 
+
     % figure;
     % plot(emg_data);
 

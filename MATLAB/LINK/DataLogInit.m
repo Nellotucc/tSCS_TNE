@@ -1,7 +1,7 @@
 % Load DataLog interface library
 % If already loaded, unload first: unloadlibrary OnLineInterface;
 %unloadlibrary OnLineInterface64;
-addpath('C:\Users\local_B216353\Documents\RICCARDO_tSCS\MATLAB\LINK'); % will need to be changed
+addpath('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\LINK'); % will need to be changed
 clear;  % just in case library has outstanding objects.
 if ~libisloaded('OnLineInterface64')  % only load if not already loaded
     [notfound,warnings]=loadlibrary('OnLineInterface64.dll', 'OnLineInterface.h');
