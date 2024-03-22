@@ -47,11 +47,9 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
     % disp("SIZE")
     % disp(size(abs_emg));
 
-    noise_threshold = 5*noise_std;
+    noise_threshold = 6*noise_std;
 
-    %[peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the 4 highest peak that have min distance of 10
-    [peaks, locations] = findpeaks(abs_emg(t_0 - 300:t_0 + interpulse_duration + 300), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the 4 highest peak that have min distance of 10
-
+    [peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 10,"MinPeakHeight",noise_threshold); % take the 4 highest peak that have min distance of 10
     disp("PEAKS")
     disp(size(peaks))
     size_peaks = size(peaks);
@@ -251,13 +249,7 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
         patch([sp, spe,spe ,sp], ...
             [1.2*min(emg_data), 1.2*min(emg_data), 1.2*max(emg_data), 1.2*max(emg_data)], 'b', 'FaceAlpha', 0.1);
         
-        %bool_found = true; % for testing
-        start_window = 0;
-        % Add a straight line y = 6*std_noise
-        y_line = noise_threshold;
-        x_line = linspace(start_window,start_window+500, 500); % Adjust the range as needed
-        h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
-
+        bool_found = true; % for testing
 
         if bool_found % only all the lines and legends if MEP detected
             search_pos_begin_1 = search_pos_begin_1- start_window;
