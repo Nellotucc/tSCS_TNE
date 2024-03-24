@@ -19,5 +19,3 @@ function stacked_data = getDataFromChannels(chs,sampleRate, numberOfValuesmax)
 
 end
 
-% COMPRENDRE QUI RETURN POUR AVOIR LE SIGNAL EMG UNIQUEMENT,
-% VALUES.PVDATA??

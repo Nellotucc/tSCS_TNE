@@ -132,3 +132,24 @@ if not_found == false
 end
 
 plot(EMG_preprocessed)
+
+%% LOOK THROUGH DATA TO FIND STIMS
+
+data = load("DATA/20march/black2/45-50-50ip/full_emg_3.mat");
+emg = data.emg_data_3;
+interpulse_duration = 50;
+
+[norm_factor_afterfilter, EMG_preprocessed] = EMG_preprocessing((double(emg))', sf, selected_filters, 0, plot_chs, selectedChannels, bool_plot_PSD, paper_nb); %preprocess
+plot(EMG_preprocessed)
+%% CHOOSE T 0 
+start = 15500;
+t_0 = 700;
+emg = EMG_preprocessed(start:start+4999,1);
+plot(emg)
+
+%% FIND RESPONSE 
+bool_plot_MEP = false;
+response = cell(1, 1); % jxi array of responses
+[response{1,1},p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg, interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+
+%plot_response(response,current)

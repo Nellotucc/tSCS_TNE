@@ -4,7 +4,7 @@
 % It does restrict the search range to t_0 +10 to t_0 +interpulse+ 200
 % Works for true positive
 
-function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,bool_colour_response,window_size)
+function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size)
     disp("INTERPULSE FIRST")
     disp(interpulse_duration);
     %interpulse_duration = interpulse_duration/1000;
@@ -22,15 +22,19 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
         disp(['window missing', num2str(window_size-numberOfValues), 'values'])
     end
     
+    %noise_std_2 is useless TO BE REMOVED
     if t_0 > numberOfValues/2
-        noise_std = std((emg_data(1:floor(numberOfValues/2)))); %take the noise on the last 600 number of values.
+        noise_std = std((emg_data(1:floor(numberOfValues/2)))); %take the noise on first half of the signal
         noise_std_2 = std((emg_data(1:floor(numberOfValues/2))));
     else
-        noise_std = std((emg_data(floor(numberOfValues/2):numberOfValues))); %take the noise on the last 600 number of values.
+        noise_std = std((emg_data(floor(numberOfValues/2):numberOfValues))); %take the noise on the last half of the signal.
         noise_std_2 = std((emg_data(floor(numberOfValues/2):numberOfValues)));
     end
     
     %% BLAMK STIM ARTIFACTS
+    % not really useful anymore. It blanks MEPs. Maybe if made more complex
+    % it can be interesting
+
     % [not_found, ~,t_artifact] = StimPulseDetection3(emg_data,interpulse_duration*1000,sf);
     % if not_found == false
     %     emg_data(t_artifact-15:t_artifact+15,:) = 0;
@@ -47,25 +51,37 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
     % disp("SIZE")
     % disp(size(abs_emg));
 
-    noise_threshold = 5*noise_std;
+    noise_threshold = 7*noise_std;
+    disp(noise_threshold)
 
+    % here we augmented the window before and after the t_0 because the
+    % stimulator keeps on changing the delay. Hopefully it will be fine
+    % with big window.
+
+    search_range = {t_0-300, t_0 + interpulse_duration + 300};
     %[peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the 4 highest peak that have min distance of 10
-    [peaks, locations] = findpeaks(abs_emg(t_0 - 300:t_0 + interpulse_duration + 300), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the 4 highest peak that have min distance of 10
+    [peaks, locations] = findpeaks(abs_emg(search_range{1}:search_range{2}), "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the peaks that have min distance of 20 and are above threshold
+
 
     disp("PEAKS")
-    disp(size(peaks))
     size_peaks = size(peaks);
+    disp(size_peaks);
+   
     
     
     [sorted_peaks, sorted_indices] = sort(peaks, 'descend');
     
-    bool_first_pulse = false;
-
+    bool_first_pulse = false; %boolean to assess if the highest peak is the first pulse or not. If not then it shouldn't be a response
+    
+    disp("lOCS")
+    disp(locations)
+    
     if size_peaks(1)>1
+        disp("ok1")
 
         % Sort peaks in descending order and take the top two
         top_two_peaks = sorted_peaks(1:2);
-        top_two_locations = locations(sorted_indices(1:2)) + t_0 + 10;
+        top_two_locations = locations(sorted_indices(1:2)) + search_range{1};
 
         % Check if there is a peak before the top peak
         % if the top peak is not the first peak then it shouldn't look for MEP
@@ -81,9 +97,11 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
             % disp("Second peak value: " + second_peak);
             % disp("Second peak location: " + second_peak_location);
             bool_first_pulse = false;
+            disp("not ok 2")
         else
             % There is no peak before the top peak
             % disp("There is no peak before the top peak.");
+            disp("ok2")
         end
 
         % Assign top peak and its location
@@ -93,19 +111,13 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
     elseif size_peaks(1) == 1
         bool_first_pulse = true;
         top_peak = sorted_peaks(1);
-        top_location = locations(sorted_indices(1)) + t_0 + 10;
+        top_location = locations(sorted_indices(1)) + search_range{1};
     end
 
 
     % Display top peak and its location
     % disp("Top peak value: " + top_peak);
     % disp("Top peak location: " + top_location);
-    
-    if muscle_loc == "proximal"
-        muscle_reflex_delay = 10*sf/1000;
-    else
-        muscle_reflex_delay = 20*sf/1000;
-    end
     
     %% Define search window from peak
     
@@ -159,8 +171,9 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
         end
     else
         response = 'no or invalid response';
+        p2p_amplitude_1 = 0 ;
     end
-
+    
 
     %PLOTTING
     % THIS PLOT IS FOR THE WHOLE WINDOW
@@ -236,26 +249,24 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
         % Plot the signal
         figure;
 
-        start_window =  max(t_0 - 100, 1);
+        start_window =  max(search_range{1}-50, 1);
 
-        h1 = plot(emg_data(start_window:start_window+500,:), 'm', 'LineWidth', 1); % plots only 1000 values around ROI
+        h1 = plot(emg_data(start_window:search_range{2},:), 'm', 'LineWidth', 1); % plots only 1000 values around ROI
         hold on;
 
         [max_amplitude, ~] = max(emg_data);
         t_0 = t_0 - start_window;
         h8 = plot([t_0, t_0], [max_amplitude, 0], 'p-', 'LineWidth', 2);
 
-        % add a patch for the search range t_0 +10:t_0 +interpulse_duration+ 200;
-        sp = t_0 +10;
-        spe = t_0 +interpulse_duration+ 200;
-        patch([sp, spe,spe ,sp], ...
+        % add a patch for the search range of first pulse;
+        patch([search_range{1}-start_window, search_range{2}-start_window,search_range{2}-start_window ,search_range{1}-start_window], ...
             [1.2*min(emg_data), 1.2*min(emg_data), 1.2*max(emg_data), 1.2*max(emg_data)], 'b', 'FaceAlpha', 0.1);
         
         %bool_found = true; % for testing
-        start_window = 0;
-        % Add a straight line y = 6*std_noise
+
+        % Add a straight line for noise threshold
         y_line = noise_threshold;
-        x_line = linspace(start_window,start_window+500, 500); % Adjust the range as needed
+        x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
         h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
 
 
@@ -276,26 +287,20 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
             % 
             % disp(search_pos_begin_2);
             % disp(search_pos_end_2);
-
-            start_window = 0;
-            % Add a straight line y = 6*std_noise
-            y_line = 10*noise_std; 
-            x_line = linspace(start_window,start_window+500, 500); % Adjust the range as needed
-            h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
         
             % Add a straight line y = 6*std_noise_2
             y_line = 6*noise_std_2; 
-            x_line = linspace(start_window,start_window+500, 500); % Adjust the range as needed
+            x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
             h3 = plot(x_line, ones(size(x_line)) * y_line, 'y--', 'LineWidth', 1);
         
             % Add a straight line for suppression threshold
             y_line = (1-threshold_supp_level)*p2p_amplitude_1; 
-            x_line = linspace(start_window, start_window+500, 500);
+            x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
             h4 = plot(x_line, ones(size(x_line)) * y_line, 'b--', 'LineWidth', 2);
         
             % Add a straight line for p2p amplitude threshold
             y_line = threshold_amp;
-            x_line = linspace(start_window, start_window+500, 500);
+            x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
             h5 = plot(x_line, ones(size(x_line)) * y_line, 'g--', 'LineWidth', 2);
         
             % Add two straight lines for the p2p amplitude of pulse
@@ -303,7 +308,7 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
             h7 = plot([search_pos_begin_2+10, search_pos_begin_2+10], [p2p_amplitude_2, 0], 'k-', 'LineWidth', 2);
                     
             % Add legend
-            %legend([h1, h2, h3, h4, h5, h6, h7, h8], 'EMG signal', '10*std noise', '6*std noise', 'suppression level threshold', 'amplitude threshold', 'P2P peak 1', 'P2P peak 1', 'T 0');
+            legend([h1, h2, h3, h4, h5, h6, h7, h8], 'EMG signal', 'threshold', '6*std noise', 'suppression level threshold', 'amplitude threshold', 'P2P peak 1', 'P2P peak 1', 'T 0');
         else
             %legend([h1, h8], 'EMG signal','T 0');
 
@@ -319,33 +324,6 @@ function [response] = ActionPotDetectDoublePulse3(t_0,muscle_loc,emg_data,sf,int
     end
     
     
-    % % INITIAL RESPONSE COLOUR CODING WITH BIG GREEN/RED SQUARE
-    % NOW WE USE A FUNCTION plot_response OUTSIDE OF ActionPotentialDetection3 TO PLOT ALL THE RESPONSES
-    % TOGETHER IN CIRCLES. Can still use the square for single trials
-    % if bool_colour_response
-    %     if strcmp(response, 'reflex response')
-    % 
-    %         % Create a green filled rectangle
-    %         figure;
-    %         rectangle('Position', [0, 0, 1, 1], 'FaceColor', 'g');
-    %         axis equal; % Maintain equal scaling on both axes
-    %         axis off;   % Turn off the axis for a cleaner appearance
-    %     else
-    %         % Create a red filled rectangle
-    %         figure;
-    %         rectangle('Position', [0, 0, 1, 1], 'FaceColor', 'r');
-    %         axis equal;
-    %         axis off;
-    % 
-    % 
-    %     end
-    % end
-
   
 
 end    
-
-
-
-%HOW TO MAKE SURE ITS AN AP AND
-% NOT JUST 2 ARTIFCATS.
