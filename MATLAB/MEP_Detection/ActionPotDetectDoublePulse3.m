@@ -266,7 +266,17 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
 
         % Add a straight line for noise threshold
         y_line = noise_threshold;
-        x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
+        % disp("CLASS")
+        % disp(class(search_range{1}))
+        % disp(class(start_window))
+        % search_range{1} = int32(search_range{1});
+        % start_window= int32(start_window);
+        % search_range{2} = int32(search_range{2});
+        % disp("CLASS")
+        % disp(class(search_range{1}))
+        % disp(class(start_window))
+        
+        x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
         h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
 
 
@@ -290,17 +300,18 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         
             % Add a straight line y = 6*std_noise_2
             y_line = 6*noise_std_2; 
-            x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
+            
+            x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
             h3 = plot(x_line, ones(size(x_line)) * y_line, 'y--', 'LineWidth', 1);
         
             % Add a straight line for suppression threshold
             y_line = (1-threshold_supp_level)*p2p_amplitude_1; 
-            x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
+            x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
             h4 = plot(x_line, ones(size(x_line)) * y_line, 'b--', 'LineWidth', 2);
         
             % Add a straight line for p2p amplitude threshold
             y_line = threshold_amp;
-            x_line = linspace(search_range{1}-start_window,search_range{2}-start_window); % Adjust the range as needed
+            x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
             h5 = plot(x_line, ones(size(x_line)) * y_line, 'g--', 'LineWidth', 2);
         
             % Add two straight lines for the p2p amplitude of pulse
@@ -308,7 +319,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
             h7 = plot([search_pos_begin_2+10, search_pos_begin_2+10], [p2p_amplitude_2, 0], 'k-', 'LineWidth', 2);
                     
             % Add legend
-            legend([h1, h2, h3, h4, h5, h6, h7, h8], 'EMG signal', 'threshold', '6*std noise', 'suppression level threshold', 'amplitude threshold', 'P2P peak 1', 'P2P peak 1', 'T 0');
+            %legend([h1, h2, h3, h4, h5, h6, h7, h8], 'EMG signal', 'threshold', '6*std noise', 'suppression level threshold', 'amplitude threshold', 'P2P peak 1', 'P2P peak 1', 'T 0');
         else
             %legend([h1, h8], 'EMG signal','T 0');
 

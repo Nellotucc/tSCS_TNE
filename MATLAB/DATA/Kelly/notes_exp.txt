@@ -1,0 +1,19 @@
+first pulse to be discarted since its always 15mA artifact
+
+T12-L1 big electrode: threshold 45 mA only distal muscles
+problems at T12-L1 big electrode: current 45 rep1, 40 rep 2 rep3
+
+small elec:
+yellow 1 : BAD
+red line threshold very high makes problems.
+problems : 40 rep 3, 55 rep 1
+
+yellow 2 : proximal avant distal
+
+yellow 3 : general
+
+black :tema si  distal
+
+yellow 3 verterbrae : 
+yellow1 : left in the real time folder 30-35 is 50-55, 40-45 is 35-40... problem current 55 rep1,rep2
+yellow2 : right
