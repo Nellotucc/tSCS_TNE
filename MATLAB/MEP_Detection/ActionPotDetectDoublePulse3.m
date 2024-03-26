@@ -254,9 +254,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     % PLOTTING
     % THIS PLOT IS FOR A SMALLER WINDOW
     if bool_plot_MEP
-    
-        % Plot the signal
-
+        
         start_window =  max(search_range{1}-50, 1);
 
         h1 = plot(emg_data(start_window:search_range{2},:), 'm', 'LineWidth', 1); % plots only 1000 values around ROI
@@ -339,7 +337,6 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         title('EMG signal');
         xlabel('Time');
         ylabel('Signal Value');
-        hold off;
     end
     
     

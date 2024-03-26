@@ -1,7 +1,4 @@
 function plot_response(responses, current)
-    % Create a figure
-    figure;
-
     % Define number of dots
     num_dots = numel(responses);
 
