@@ -3,7 +3,7 @@ function stacked_data = getDataFromChannels(chs,sampleRate, numberOfValuesmax)
     % channels
     % chs: channels parameter
     % Example: getDataFromChannels({0,2});
-    disp(length(chs));
+
     data_list = {};
     for i = 1:length(chs)
         channel = chs{i};

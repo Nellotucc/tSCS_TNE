@@ -8,11 +8,16 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     disp("INTERPULSE FIRST")
     disp(interpulse_duration);
     %interpulse_duration = interpulse_duration/1000;
-    %emg_data should be from one channel only
-    
+    %emg_data should be from one channel and should be [numberOfvalues,1]
+    %disp(size(emg_data))
+    numberOfValues = length(emg_data);
+
+    if size(emg_data, 1) ~= numberOfValues
+        emg_data = emg_data';  % Transpose emg_data
+    end
+
     clf;
     t_0 = floor(t_0);
-    numberOfValues = length(emg_data);
     %check that the window size is as expected. If shorter : remove the
     %X to t_0 because it means the emg didnt take the first X ms so the
     %whole window is shifted by X
@@ -56,9 +61,13 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
 
     % here we augmented the window before and after the t_0 because the
     % stimulator keeps on changing the delay. Hopefully it will be fine
-    % with big window.
-
+    % with big window.        
     search_range = {t_0-300, t_0 + interpulse_duration + 300};
+
+    %indices must be positive integers
+    if search_range{1} <1
+        search_range{1} =1;
+    end
     %[peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the 4 highest peak that have min distance of 10
     [peaks, locations] = findpeaks(abs_emg(search_range{1}:search_range{2}), "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the peaks that have min distance of 20 and are above threshold
 
@@ -247,7 +256,6 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     if bool_plot_MEP
     
         % Plot the signal
-        figure;
 
         start_window =  max(search_range{1}-50, 1);
 
