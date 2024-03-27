@@ -8,7 +8,8 @@ plot_signal();
 % Subplot 2 for Response
 subplot(2, 1, 2);  % 2 rows, 1 column, 2nd subplot
 plot_response_test();
-
+%%
+[x,z,ma] = create_figure(2);
 %%
 figure;
 numberOfchannels = 2;

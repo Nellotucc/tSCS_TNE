@@ -36,10 +36,10 @@ function plot_response2(responses, current, subplotWidth, subplotHeight)
     end
 
     % Add free text
-    str = ['RESPONSE FOR CURRENT ', num2str(current)];
+    str = ['CURRENT ', num2str(current)];
 
     % Calculate font size based on subplot height
-    fontSize = scaling_factor * 24;
+    fontSize = scaling_factor * 40;
 
     text(0.5, 0.7, str, 'FontSize', fontSize, 'HorizontalAlignment', 'center');
 

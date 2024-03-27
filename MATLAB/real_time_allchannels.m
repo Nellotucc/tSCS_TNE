@@ -94,7 +94,7 @@ current_0 = 15; %set the current to start the loop with.
 real_time_channels = selectedChannels; % set the real time channel
 
 numberOfrepetitions = 3; %i value
-numberOfcurrents = 2; %j value
+numberOfcurrents = 1; %j value
 numberOfchannels = length(real_time_channels);
 
 all_responses = cell(numberOfcurrents, numberOfrepetitions,numberOfchannels); % jxixn array of responses
@@ -144,6 +144,8 @@ for j = 1: numberOfcurrents    % Need to be increased
 
         % Enable Output
         pause(5)
+        % Make the figure visible
+        %f.Visible = 'on';
         clf;
 
         %collect EMG data and process it
@@ -180,7 +182,7 @@ for j = 1: numberOfcurrents    % Need to be increased
             % Subplot 1 for Signal
             %subplot(2, numberOfchannels, (k-1)*2 + 1);
             subplot('Position', signalPosition);
-            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues,numberOfchannels); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
             title(['Signal of ', channelNames{k}]);
             
             all_responses{j, i,k} = response;  

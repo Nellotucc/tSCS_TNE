@@ -44,7 +44,7 @@ plot(emg_1)
 figure;
 [norm, EMG_preprocessed] = EMG_preprocessing(double(emg_1)',1000,selected_filters,false,false,1,false,1);
 
-[response, amp ] = ActionPotDetectDoublePulse3(36100,EMG_preprocessed,50,norm,true,5000);
+[response, amp ] = ActionPotDetectDoublePulse3(36100,EMG_preprocessed,50,norm,true,5000,1);
 disp(response)
 
 

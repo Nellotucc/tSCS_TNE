@@ -4,7 +4,7 @@
 % It does restrict the search range to t_0 +10 to t_0 +interpulse+ 200
 % Works for true positive
 
-function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size)
+function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size,numberOfchannels)
     disp("INTERPULSE FIRST")
     disp(interpulse_duration);
     %interpulse_duration = interpulse_duration/1000;
@@ -56,8 +56,8 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     % disp("SIZE")
     % disp(size(abs_emg));
 
-    noise_threshold = 4*noise_std;
-    disp(noise_threshold)
+    noise_threshold_peak = 4*noise_std;
+    disp(noise_threshold_peak)
 
     % here we augmented the window before and after the t_0 because the
     % stimulator keeps on changing the delay. Hopefully it will be fine
@@ -68,8 +68,8 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     if search_range{1} <1
         search_range{1} =1;
     end
-    %[peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the 4 highest peak that have min distance of 10
-    [peaks, locations] = findpeaks(abs_emg(search_range{1}:search_range{2}), "MinPeakDistance", 20,"MinPeakHeight",noise_threshold); % take the peaks that have min distance of 20 and are above threshold
+    %[peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold_peak); % take the 4 highest peak that have min distance of 10
+    [peaks, locations] = findpeaks(abs_emg(search_range{1}:search_range{2}), "MinPeakDistance", 20,"MinPeakHeight",noise_threshold_peak); % take the peaks that have min distance of 20 and are above threshold
 
 
     disp("PEAKS")
@@ -269,24 +269,26 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
             [1.2*min(emg_data), 1.2*min(emg_data), 1.2*max(emg_data), 1.2*max(emg_data)], 'b', 'FaceAlpha', 0.1);
         
 
-        % Add a straight line for noise threshold
-        y_line = noise_threshold;
-        % disp("CLASS")
-        % disp(class(search_range{1}))
-        % disp(class(start_window))
-        % search_range{1} = int32(search_range{1});
-        % start_window= int32(start_window);
-        % search_range{2} = int32(search_range{2});
-        % disp("CLASS")
-        % disp(class(search_range{1}))
-        % disp(class(start_window))
         
-        x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
-        h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
         %bool_found = true; % for testing, can cause bugs if no peaks are detected 
         % it wont have search pos begin 1
-
+       
         if bool_found % only all the lines and legends if MEP detected
+            % Add a straight line for noise threshold
+            y_line = noise_threshold;
+            % disp("CLASS")
+            % disp(class(search_range{1}))
+            % disp(class(start_window))
+            % search_range{1} = int32(search_range{1});
+            % start_window= int32(start_window);
+            % search_range{2} = int32(search_range{2});
+            % disp("CLASS")
+            % disp(class(search_range{1}))
+            % disp(class(start_window))
+
+            x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
+            h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
+
             search_pos_begin_1 = search_pos_begin_1- start_window;
             search_pos_begin_2 = search_pos_begin_2- start_window;
             search_pos_end_1 = search_pos_end_1- start_window;
@@ -327,6 +329,20 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
             % Add legend
             %legend([h1, h2, h3, h4, h5, h6, h7, h8], 'EMG signal', 'threshold', '6*std noise', 'suppression level threshold', 'amplitude threshold', 'P2P peak 1', 'P2P peak 1', 'T 0');
         else
+            % Add a straight line for noise threshold
+            y_line = noise_threshold_peak;
+            % disp("CLASS")
+            % disp(class(search_range{1}))
+            % disp(class(start_window))
+            % search_range{1} = int32(search_range{1});
+            % start_window= int32(start_window);
+            % search_range{2} = int32(search_range{2});
+            % disp("CLASS")
+            % disp(class(search_range{1}))
+            % disp(class(start_window))
+
+            x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
+            h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
             %legend([h1, h8], 'EMG signal','T 0');
 
         end
@@ -338,7 +354,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         xlabel('Time');
         ylab = ylabel('Signal Value');
         ylabPos = get(ylab, 'Position');
-        ylabPos(1) = ylabPos(1) + 0.2;  % Adjust the position
+        ylabPos(1) = ylabPos(1) + 5*numberOfchannels;  % Adjust the position
         set(ylab, 'Position', ylabPos);
 
     end
