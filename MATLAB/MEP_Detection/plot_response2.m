@@ -4,7 +4,7 @@ function plot_response2(responses, current, subplotWidth, subplotHeight)
     
     scaling_factor = min(subplotWidth, subplotHeight)*2;
     % Define dot size based on subplot dimensions
-    dotSize = scaling_factor * 1500;
+    dotSize = scaling_factor * 2000;
     disp("SCALING BBY")
     disp(scaling_factor)
 

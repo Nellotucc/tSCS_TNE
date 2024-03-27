@@ -15,7 +15,7 @@ clc;
 
 selectedChannels = {0,1,2,3,4,5}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
 channelNames = {'SO_R','SO_L','TA_R','TA_L','RF_R','RF_L'};
-
+% 
 % selectedChannels = {0,1}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
 % channelNames = {'SO_R','SO_L'};
 
@@ -88,13 +88,12 @@ SetSingleChanSingleParam_v2(s, 0, 9, 1);
 % can also tune pause(0.920) updated t_0 for synchronization if they change
 
 
-
 % BEGGINING OF REAL TIME
 current_0 = 15; %set the current to start the loop with.
 real_time_channels = selectedChannels; % set the real time channel
 
 numberOfrepetitions = 3; %i value
-numberOfcurrents = 1; %j value
+numberOfcurrents = 2; %j value
 numberOfchannels = length(real_time_channels);
 
 all_responses = cell(numberOfcurrents, numberOfrepetitions,numberOfchannels); % jxixn array of responses
@@ -103,20 +102,36 @@ all_emgs = cell(numberOfcurrents, numberOfrepetitions,numberOfchannels); % jxixn
 
 
 %prepare the figure
-[f,subplotWidth,subplotHeight] = create_figure(numberOfchannels); % Adjust width and height as needed
-subplotWidth_signal = subplotWidth;
-subplotHeight_signal = subplotHeight*0.75;
-subplotWidth_response = subplotWidth;
-subplotHeight_response = subplotHeight*0.25;
+f = create_figure(); % Adjust width and height as needed
+% Define the margins and gaps
+leftMargin = 0.03;
+rightMargin = 0.02;
+topMargin = 0.05;
+bottomMargin = 0.05;
+horizontalGap = 0.02;
+verticalGap = 0.05;
+
+% Calculate the total width and height available for subplots
+totalWidth = 1 - leftMargin - rightMargin - horizontalGap;
+totalHeight = 1 - topMargin - bottomMargin - (numberOfchannels - 1)*verticalGap;
+
+% Calculate the width and height of each subplot
+subplotWidth = totalWidth ;
+subplotHeight = totalHeight/ numberOfchannels; % Two rows
+
+subplotWidth_signal = subplotWidth*0.75;
+subplotHeight_signal = subplotHeight;
+subplotWidth_response = subplotWidth*0.25;
+subplotHeight_response = subplotHeight;
 
 numberOfValues = 5000;
 
 current_initial = 15; % small comfortable current to only see artifact
-SetSingleChanSingleParam(s, 0, 6, current_initial);
+%SetSingleChanSingleParam(s, 0, 6, current_initial);
 
-SetSingleChanState(s, 0, 1, 1, 0); % activate High Voltage
+%SetSingleChanState(s, 0, 1, 1, 0); % activate High Voltage
 pause(2)
-SetSingleChanState(s, 0, 1, 1, 1); % activate output
+%SetSingleChanState(s, 0, 1, 1, 1); % activate output
 
 start_time = tic;
 
@@ -128,25 +143,25 @@ offset = 0;
 
 emg_removed = getDataFromChannels(real_time_channels,sf,40000); % remove available samples before recording
 
-SetSingleChanSingleParam(s, 0, 6, current_0)
+%SetSingleChanSingleParam(s, 0, 6, current_0)
 
 pause(0.920); % pause accounts for delay when sending the next command SetSingleChanSingleParam_v2(s, 0, 9, 1). Based on tests.
 
-SetSingleChanSingleParam_v2(s, 0, 9, 1);
+%SetSingleChanSingleParam_v2(s, 0, 9, 1);
 
+pause(5)
 
 for j = 1: numberOfcurrents    % Need to be increased
     current =  current_0 + (j-1)*5; % mA, it will start the first 3 repetitions at current_0
-    SetSingleChanSingleParam(s, 0, 6, current)
+    %SetSingleChanSingleParam(s, 0, 6, current)
     
-
+    clf; % change for multiple currents like add a figure or something
     for i = 1: numberOfrepetitions  % Number of repetitions
 
         % Enable Output
-        pause(5)
         % Make the figure visible
         %f.Visible = 'on';
-        clf;
+        
 
         %collect EMG data and process it
         for_timer = tic; % start timer
@@ -166,30 +181,30 @@ for j = 1: numberOfcurrents    % Need to be increased
         
 
 
-        for k = 1:numberOfchannels  % Loop over channels
+        for k = 1:numberOfchannels  % Loop over channels PLOT VERTICALLY
             [norm_factor_afterfilter, EMG_preprocessed] = EMG_preprocessing((double(emg_data(k,:)))', sf, selected_filters, 0, plot_chs, selectedChannels{k}, bool_plot_PSD, paper_nb); %preprocess
 
             %PLOTTING
             % Calculate the position for subplot 1 (Signal)
-            xPos1 = leftMargin + (k-1) * (subplotWidth_signal + horizontalGap);
-            yPos1 = 1 - topMargin - subplotHeight_signal;
-            signalPosition = [xPos1, yPos1, subplotWidth_signal, subplotHeight_signal];
+            xPos1 = leftMargin+(i-1)*subplotWidth_signal*1/3;
+            yPos1 = 1 - topMargin - (k-1) * (subplotHeight_signal + verticalGap)-subplotHeight_signal;
+            signalPosition = [xPos1, yPos1, subplotWidth_signal/3, subplotHeight_signal];
             % Calculate the position for subplot 2 (Response)
-            xPos2 = leftMargin + (k-1) * (subplotWidth_signal + horizontalGap);
-            yPos2 = bottomMargin;
+            xPos2 = leftMargin + subplotWidth_signal + horizontalGap;
+            yPos2 = yPos1;
             responsePosition = [xPos2, yPos2, subplotWidth_response, subplotHeight_response];
 
             % Subplot 1 for Signal
             %subplot(2, numberOfchannels, (k-1)*2 + 1);
             subplot('Position', signalPosition);
-            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues,numberOfchannels); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
             title(['Signal of ', channelNames{k}]);
-            
+
             all_responses{j, i,k} = response;  
             all_amplitudes{j, i,k} = p2p_amplitude;  
             emg = emg_data(k, :);
             all_emgs{j, i, k} = emg; % Store EMG data for the current channel
-            
+
             % Subplot 2 for Response
             %subplot(2, numberOfchannels, (k-1)*2 + 2);  
             subplot('Position', responsePosition);
@@ -201,7 +216,9 @@ for j = 1: numberOfcurrents    % Need to be increased
 
             filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000)));
             save(filename, 'emg'); % saving raw data
+
         end
+        pause(5)
 
         elapsed_time_loop = toc(for_timer); % stop timer
         fprintf('Processing time: %.4f seconds\n', elapsed_time_loop);
@@ -211,6 +228,6 @@ for j = 1: numberOfcurrents    % Need to be increased
     
     
 end
-SetSingleChanState(s, 0, 1, 0, 0);
+%SetSingleChanState(s, 0, 1, 0, 0);
 
 disp("END")

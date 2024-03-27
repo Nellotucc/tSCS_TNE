@@ -16,8 +16,8 @@ clc;
 selectedChannels = {0,1,2,3,4,5}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
 channelNames = {'SO_R','SO_L','TA_R','TA_L','RF_R','RF_L'};
 
-selectedChannels = {0,1}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
-channelNames = {'SO_R','SO_L'};
+% selectedChannels = {0,1}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
+% channelNames = {'SO_R','SO_L'};
 
 sf = 1000; %sampling frequency of channel acquisition
 
@@ -88,7 +88,6 @@ SetSingleChanSingleParam_v2(s, 0, 9, 1);
 % can also tune pause(0.920) updated t_0 for synchronization if they change
 
 
-
 % BEGGINING OF REAL TIME
 current_0 = 15; %set the current to start the loop with.
 real_time_channels = selectedChannels; % set the real time channel
@@ -103,7 +102,23 @@ all_emgs = cell(numberOfcurrents, numberOfrepetitions,numberOfchannels); % jxixn
 
 
 %prepare the figure
-[f,subplotWidth,subplotHeight] = create_figure(numberOfchannels); % Adjust width and height as needed
+f = create_figure(); % Adjust width and height as needed
+% Define the margins and gaps
+leftMargin = 0.03;
+rightMargin = 0.02;
+topMargin = 0.1;
+bottomMargin = 0.1;
+horizontalGap = 0.02;
+verticalGap = 0.1;
+
+% Calculate the total width and height available for subplots
+totalWidth = 1 - leftMargin - rightMargin - (numberOfchannels - 1) * horizontalGap;
+totalHeight = 1 - topMargin - bottomMargin - verticalGap;
+
+% Calculate the width and height of each subplot
+subplotWidth = totalWidth / numberOfchannels;
+subplotHeight = totalHeight; % Two rows
+
 subplotWidth_signal = subplotWidth;
 subplotHeight_signal = subplotHeight*0.75;
 subplotWidth_response = subplotWidth;
@@ -112,11 +127,11 @@ subplotHeight_response = subplotHeight*0.25;
 numberOfValues = 5000;
 
 current_initial = 15; % small comfortable current to only see artifact
-SetSingleChanSingleParam(s, 0, 6, current_initial);
+%SetSingleChanSingleParam(s, 0, 6, current_initial);
 
-SetSingleChanState(s, 0, 1, 1, 0); % activate High Voltage
+%SetSingleChanState(s, 0, 1, 1, 0); % activate High Voltage
 pause(2)
-SetSingleChanState(s, 0, 1, 1, 1); % activate output
+%SetSingleChanState(s, 0, 1, 1, 1); % activate output
 
 start_time = tic;
 
@@ -128,16 +143,16 @@ offset = 0;
 
 emg_removed = getDataFromChannels(real_time_channels,sf,40000); % remove available samples before recording
 
-SetSingleChanSingleParam(s, 0, 6, current_0)
+%SetSingleChanSingleParam(s, 0, 6, current_0)
 
 pause(0.920); % pause accounts for delay when sending the next command SetSingleChanSingleParam_v2(s, 0, 9, 1). Based on tests.
 
-SetSingleChanSingleParam_v2(s, 0, 9, 1);
+%SetSingleChanSingleParam_v2(s, 0, 9, 1);
 
 
 for j = 1: numberOfcurrents    % Need to be increased
     current =  current_0 + (j-1)*5; % mA, it will start the first 3 repetitions at current_0
-    SetSingleChanSingleParam(s, 0, 6, current)
+    %SetSingleChanSingleParam(s, 0, 6, current)
     
 
     for i = 1: numberOfrepetitions  % Number of repetitions
@@ -163,8 +178,6 @@ for j = 1: numberOfcurrents    % Need to be increased
         emg_data = getDataFromChannels(real_time_channels,sf,numberOfValues); % collect data
 
         disp(['Looking at pulse at time t_0 = : ', num2str(updated_t_0)]);
-        
-
 
         for k = 1:numberOfchannels  % Loop over channels
             [norm_factor_afterfilter, EMG_preprocessed] = EMG_preprocessing((double(emg_data(k,:)))', sf, selected_filters, 0, plot_chs, selectedChannels{k}, bool_plot_PSD, paper_nb); %preprocess
@@ -182,14 +195,14 @@ for j = 1: numberOfcurrents    % Need to be increased
             % Subplot 1 for Signal
             %subplot(2, numberOfchannels, (k-1)*2 + 1);
             subplot('Position', signalPosition);
-            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues,numberOfchannels); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
             title(['Signal of ', channelNames{k}]);
-            
+
             all_responses{j, i,k} = response;  
             all_amplitudes{j, i,k} = p2p_amplitude;  
             emg = emg_data(k, :);
             all_emgs{j, i, k} = emg; % Store EMG data for the current channel
-            
+
             % Subplot 2 for Response
             %subplot(2, numberOfchannels, (k-1)*2 + 2);  
             subplot('Position', responsePosition);
@@ -203,6 +216,7 @@ for j = 1: numberOfcurrents    % Need to be increased
             save(filename, 'emg'); % saving raw data
         end
 
+        
         elapsed_time_loop = toc(for_timer); % stop timer
         fprintf('Processing time: %.4f seconds\n', elapsed_time_loop);
 
@@ -211,6 +225,6 @@ for j = 1: numberOfcurrents    % Need to be increased
     
     
 end
-SetSingleChanState(s, 0, 1, 0, 0);
+%SetSingleChanState(s, 0, 1, 0, 0);
 
 disp("END")

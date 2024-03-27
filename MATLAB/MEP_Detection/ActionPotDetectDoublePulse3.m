@@ -4,7 +4,7 @@
 % It does restrict the search range to t_0 +10 to t_0 +interpulse+ 200
 % Works for true positive
 
-function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size,numberOfchannels)
+function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size)
     disp("INTERPULSE FIRST")
     disp(interpulse_duration);
     %interpulse_duration = interpulse_duration/1000;
@@ -56,7 +56,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     % disp("SIZE")
     % disp(size(abs_emg));
 
-    noise_threshold_peak = 4*noise_std;
+    noise_threshold_peak = 3*noise_std;
     disp(noise_threshold_peak)
 
     % here we augmented the window before and after the t_0 because the
@@ -98,6 +98,9 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         % the assumption that the first MEP has to be higher than the first
         % one.
         bool_first_pulse = true;
+        % IT CHECKS THE SECOND TOP LOCATION... MAYBE SHOULD BE CHANGED IF
+        % SIGNALS ARE NOISY SINCE THE SECOND BEST PEAK MIGHT BE JUST NOISE
+        % AND NOT ARTIFACT
         if top_two_locations(2) < top_two_locations(1)
             % There is a peak before the top peak
             second_peak = top_two_peaks(2);
@@ -132,6 +135,13 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     
     bool_found = false;
 
+    %classification based on the paper automated response
+    threshold_amp = 50/norm_factor_afterfilter;
+    %threshold_amp = 5*noise_std;
+
+    threshold_supp_level = 0.4;
+    noise_threshold = 10*noise_std;
+
     if bool_first_pulse == true
         % Search AP only around the stimulation instants
         % create the search_pos boundaries for first response and second response
@@ -160,12 +170,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         suppression_level = 1-p2p_amplitude_2/p2p_amplitude_1;
 
 
-        %classification based on the paper automated response
-        threshold_amp = 50/norm_factor_afterfilter;
-        %threshold_amp = 5*noise_std;
-
-        threshold_supp_level = 0.4;
-        noise_threshold = 10*noise_std;
+        
 
         if p2p_amplitude_1 <= threshold_amp || p2p_amplitude_1 <= noise_threshold %to be changed in microvolts
             response = 'no response';
@@ -352,10 +357,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         % Customize plot
         title('EMG signal');
         xlabel('Time');
-        ylab = ylabel('Signal Value');
-        ylabPos = get(ylab, 'Position');
-        ylabPos(1) = ylabPos(1) + 5*numberOfchannels;  % Adjust the position
-        set(ylab, 'Position', ylabPos);
+        ylabel('Signal Value');
 
     end
     

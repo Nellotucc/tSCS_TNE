@@ -32,8 +32,8 @@ emg_3 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\tbd\emg
 emg_3 = emg_3.emg;
 emg_2 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\tbd\emg_channelSO_R_current20_repetition2_window5s_interpulse50.mat');
 emg_2 = emg_2.emg;
-emg_1 =  load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\20march\black2\45-50-50ip\full_emg_1.mat');
-emg_1 = emg_1.emg_data_1;
+emg_1 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\20march\yellow2\20-25\full_emg_3.mat');
+emg_1 = emg_1.emg_data_3;
 
 emg = [emg_1,emg_2,emg_3];
 
@@ -44,7 +44,7 @@ plot(emg_1)
 figure;
 [norm, EMG_preprocessed] = EMG_preprocessing(double(emg_1)',1000,selected_filters,false,false,1,false,1);
 
-[response, amp ] = ActionPotDetectDoublePulse3(36100,EMG_preprocessed,50,norm,true,5000,1);
+[response, amp ] = ActionPotDetectDoublePulse3(34606,EMG_preprocessed,100,norm,true,5000);
 disp(response)
 
 
