@@ -16,7 +16,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         emg_data = emg_data';  % Transpose emg_data
     end
 
-    clf;
+    %clf;
     t_0 = floor(t_0);
     %check that the window size is as expected. If shorter : remove the
     %X to t_0 because it means the emg didnt take the first X ms so the
@@ -56,7 +56,7 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
     % disp("SIZE")
     % disp(size(abs_emg));
 
-    noise_threshold = 7*noise_std;
+    noise_threshold = 4*noise_std;
     disp(noise_threshold)
 
     % here we augmented the window before and after the t_0 because the
@@ -268,7 +268,6 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         patch([search_range{1}-start_window, search_range{2}-start_window,search_range{2}-start_window ,search_range{1}-start_window], ...
             [1.2*min(emg_data), 1.2*min(emg_data), 1.2*max(emg_data), 1.2*max(emg_data)], 'b', 'FaceAlpha', 0.1);
         
-        %bool_found = true; % for testing
 
         % Add a straight line for noise threshold
         y_line = noise_threshold;
@@ -284,7 +283,8 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         
         x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
         h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
-
+        %bool_found = true; % for testing, can cause bugs if no peaks are detected 
+        % it wont have search pos begin 1
 
         if bool_found % only all the lines and legends if MEP detected
             search_pos_begin_1 = search_pos_begin_1- start_window;
@@ -336,7 +336,11 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         % Customize plot
         title('EMG signal');
         xlabel('Time');
-        ylabel('Signal Value');
+        ylab = ylabel('Signal Value');
+        ylabPos = get(ylab, 'Position');
+        ylabPos(1) = ylabPos(1) + 0.2;  % Adjust the position
+        set(ylab, 'Position', ylabPos);
+
     end
     
     
