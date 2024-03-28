@@ -5,7 +5,7 @@
 folder = '15march\';
 folder_path = ['DATA\',folder];
 
-data1 = load("DATA\NELLO\T11-T12\70-75\full_emg_RF_L_70-75.mat");
+data1 = load("DATA\15march\emg_current20_repetition2_5.0swindow_100interpulse.mat");
 emg = data1.emg_data;
 
 %% Variables needed for plotting
@@ -44,7 +44,7 @@ plot(emg_1)
 figure;
 [norm, EMG_preprocessed] = EMG_preprocessing(double(emg_1)',1000,selected_filters,false,false,1,false,1);
 
-[response, amp ] = ActionPotDetectDoublePulse3(19300,EMG_preprocessed,100,norm,true,5000);
+[response, amp ] = ActionPotDetectDoublePulse3(34606,EMG_preprocessed,100,norm,true,5000);
 disp(response)
 
 
