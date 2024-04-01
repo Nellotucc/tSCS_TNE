@@ -1,3 +1,8 @@
+% ONLY WORKS WITH ONE MUSCLE, ADD A FOR LOOP AND A CELL INDEX FOR EACH
+% MUSCLE
+
+
+
 function [best_electrode] = best_electrode_finder(directories,current_i, current_f,interpulse_duration, num_repetitions,muscle, bool_plot)
 % This function return the best electrode (file path for now) for
 % activating the muscles. It can be either muscle specific or conventional.
@@ -34,7 +39,7 @@ paper_nb = 1;
 num_currents = (current_f - current_i) / 5 + 1;
 
 % Initialize a cell array to store all the EMG data properties : amplitude,
-% std, response, condition
+% std, response, 4 conditions:
 % 1.
 % At least two reflex responses in the muscles
 % 2.
@@ -86,7 +91,7 @@ for dir_index = 1:numel(directories)
     end
 
     %HERE WE SHOULD STOCK THE INFORMATION TO COMPARE FOR EACH DIRECTORY :
-    %minimal threshold
+    
 end
 best_electrode = 1;
 
