@@ -5,8 +5,8 @@
 % Works for true positive
 
 function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size)
-    disp("INTERPULSE FIRST")
-    disp(interpulse_duration);
+    %disp("INTERPULSE FIRST")
+    %disp(interpulse_duration);
     %interpulse_duration = interpulse_duration/1000;
     %emg_data should be from one channel and should be [numberOfvalues,1]
     %disp(size(emg_data))
@@ -57,7 +57,7 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
     % disp(size(abs_emg));
 
     noise_threshold_peak = 3*noise_std;
-    disp(noise_threshold_peak)
+    %disp(noise_threshold_peak)
 
     % here we augmented the window before and after the t_0 because the
     % stimulator keeps on changing the delay. Hopefully it will be fine
@@ -71,22 +71,22 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
     %[peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold_peak); % take the 4 highest peak that have min distance of 10
     [peaks, locations] = findpeaks(abs_emg(search_range{1}:search_range{2}), "MinPeakDistance", 20,"MinPeakHeight",noise_threshold_peak); % take the peaks that have min distance of 20 and are above threshold
 
-
-    disp("PEAKS")
     size_peaks = size(peaks);
-    disp(size_peaks);
-   
+    % disp("PEAKS")
+    % disp(size_peaks);
+
     
     
     [sorted_peaks, sorted_indices] = sort(peaks, 'descend');
     
     bool_first_pulse = false; %boolean to assess if the highest peak is the first pulse or not. If not then it shouldn't be a response
     
-    disp("lOCS")
-    disp(locations)
+    % disp("lOCS")
+    % disp(locations)
     
     if size_peaks(1)>1
-        disp("ok1")
+        
+        %disp("ok1")
 
         % Sort peaks in descending order and take the top two
         top_two_peaks = sorted_peaks(1:2);
@@ -109,11 +109,11 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
             % disp("Second peak value: " + second_peak);
             % disp("Second peak location: " + second_peak_location);
             bool_first_pulse = false;
-            disp("not ok 2")
+            %disp("not ok 2")
         else
             % There is no peak before the top peak
             % disp("There is no peak before the top peak.");
-            disp("ok2")
+            %disp("ok2")
         end
 
         % Assign top peak and its location
