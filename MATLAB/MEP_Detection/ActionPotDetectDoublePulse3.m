@@ -4,7 +4,7 @@
 % It does restrict the search range to t_0 +10 to t_0 +interpulse+ 200
 % Works for true positive
 
-function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size)
+function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,interpulse_duration,norm_factor_afterfilter,bool_plot_MEP,window_size)
     disp("INTERPULSE FIRST")
     disp(interpulse_duration);
     %interpulse_duration = interpulse_duration/1000;
@@ -124,6 +124,8 @@ function [response,p2p_amplitude_1] = ActionPotDetectDoublePulse3(t_0,emg_data,i
         bool_first_pulse = true;
         top_peak = sorted_peaks(1);
         top_location = locations(sorted_indices(1)) + search_range{1};
+    else
+        top_location = 0;
     end
 
 

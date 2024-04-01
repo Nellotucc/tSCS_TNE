@@ -12,7 +12,7 @@ emg = data1.emg_data;
 
 selectedChannels = {1};
 sf = 1000;
-interpulse_duration = 100; % us - ms --- for Double pulse. 
+interpulse_duration = 50; % us - ms --- for Double pulse. 
 current = 65;
 numberOfValues = 5000;
 % EMG preprocessing
@@ -25,20 +25,77 @@ paper_nb = 1;
 bool_plot_MEP = true;
 bool_colour_response = false;
 muscleLocations = {'distal'};
-t_0 = 1100;
-%%
-
-emg_3 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\tbd\emg_channelSO_R_current20_repetition3_window5s_interpulse50.mat');
-emg_3 = emg_3.emg;
-emg_2 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\tbd\emg_channelSO_R_current20_repetition2_window5s_interpulse50.mat');
-emg_2 = emg_2.emg;
-emg_1 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\NELLO\T11-T12\70-75\full_emg_RF_L_70-75.mat');
+t_0 = 1000;
+%% Single Load
+emg_1 = load('/Users/riccardocarpineto/Documents/TNE_MA2/tSCS_TNE/MATLAB/DATA/Kelly/small_electrode/yellow2/emg_current30_repetition1_window5s_interpulse50.mat');
 emg_1 = emg_1.emg_data;
-
-emg = [emg_1,emg_2,emg_3];
-
 figure;
 plot(emg_1)
+figure;
+[~, t_0] = max(abs(emg));
+disp(t_0)
+[response,p2p_amplitude] = Signal_analysis(t_0,double(emg_1),sf,selected_filters, 0, plot_chs, selectedChannels{1}, bool_plot_PSD, paper_nb, interpulse_duration*1000, bool_plot_MEP,numberOfValues);
+p2p_amplitude
+%% Many loads
+% Initialize a cell array to store all the loaded EMG data
+current_i = 25;
+current_f = 65;
+num_currents = (current_f - current_i) / 5 + 1;
+num_repetitions = 2;
+emg_data = cell(num_repetitions, num_currents);
+amplitudes = cell(1,num_currents);
+
+% Define the directory where your files are located
+
+directory = '/Users/riccardocarpineto/Documents/TNE_MA2/tSCS_TNE/MATLAB/DATA/Kelly/small_electrode/yellow3/';
+%directory = '/Users/riccardocarpineto/Documents/TNE_MA2/tSCS_TNE/MATLAB/DATA/Kelly/big_electrode/T12-L1/';
+
+% Iterate over different current values
+for current_index = 1:num_currents
+    current = current_i + (current_index - 1) * 5; % Compute current value
+    amplitude = 0;
+    % Iterate over repetitions
+    for repetition = 1:num_repetitions
+        % Construct the filename based on the current value and repetition number
+        filename = sprintf('emg_current%d_repetition%d_window5s_interpulse50.mat', current, repetition+1);
+        
+        % Load the file
+        file_path = fullfile(directory, filename);
+        emg_struct = load(file_path);
+        
+        % Extract the EMG data and store it in the cell array
+        emg = emg_struct.emg_data;
+        emg_data{repetition, current_index} = emg ;
+
+        [~, t_0] = max(abs(emg));
+    
+        [response,p2p_amplitude] = Signal_analysis(t_0,double(emg),sf,selected_filters, 0, plot_chs, selectedChannels{1}, bool_plot_PSD, paper_nb, interpulse_duration*1000, false,numberOfValues);
+        amplitude = amplitude+p2p_amplitude;
+        disp(filename)
+
+       
+    end
+    amplitudes{1,current_index} = amplitude/num_repetitions;
+end
+
+% Now emg_data contains all the loaded EMG data for different current values and repetitions
+%% PLOT RECRUITEMENT CURVE
+% Define the range of current values
+current_values = current_i:5:current_f;
+
+% Extract the amplitudes from the cell array
+amplitude_values = cell2mat(amplitudes);
+
+% Plot the amplitudes against current values
+plot(current_values, amplitude_values, 'o-');
+
+% Add labels and title
+xlabel('Current (mA)');
+ylabel('Amplitude');
+title('Amplitude vs Current');
+
+% Show grid
+grid on;
 
 %%
 figure;

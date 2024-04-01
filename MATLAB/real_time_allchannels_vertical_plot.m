@@ -182,8 +182,7 @@ for j = 1: numberOfcurrents    % Need to be increased
 
 
         for k = 1:numberOfchannels  % Loop over channels PLOT VERTICALLY
-            [norm_factor_afterfilter, EMG_preprocessed] = EMG_preprocessing((double(emg_data(k,:)))', sf, selected_filters, 0, plot_chs, selectedChannels{k}, bool_plot_PSD, paper_nb); %preprocess
-
+            
             %PLOTTING
             % Calculate the position for subplot 1 (Signal)
             xPos1 = leftMargin+(i-1)*subplotWidth_signal*1/3;
@@ -197,7 +196,7 @@ for j = 1: numberOfcurrents    % Need to be increased
             % Subplot 1 for Signal
             %subplot(2, numberOfchannels, (k-1)*2 + 1);
             subplot('Position', signalPosition);
-            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+            [response,p2p_amplitude] = Signal_analysis(updated_t_0,(double(emg_data(k,:)))',sf,selected_filters, 0, plot_chs, selectedChannels{k}, bool_plot_PSD, paper_nb, interpulse_duration, bool_plot_MEP,numberOfValues);
             title(['Signal of ', channelNames{k}]);
 
             all_responses{j, i,k} = response;  
