@@ -1,5 +1,7 @@
-% ONLY WORKS WITH ONE MUSCLE, ADD A FOR LOOP AND A CELL INDEX FOR EACH
-% MUSCLE
+% USE THIS FUNCTION FOR THE OLD DATA, I CREATE A NEW FILE THAT WILL WORK
+% ONLY WITH THE NEW DATA best_electrode_finder_nd
+
+
 %needs manual adjustements based on the data file since we recorded with
 %different names at the beginning
 %other problem is the t_0 plugged in assumes that no other artifact is
@@ -66,12 +68,13 @@ for dir_index = 1:numel(directories)
     for current_index = 1:num_currents
         current = current_i + (current_index - 1) * 5; % Compute current value
         amplitudes_all_reps = zeros(1, num_repetitions);
-        responses_all_reps = cell(1, num_repetitions);
+        responses_all_reps = zeros(1, num_repetitions);
 
         % Iterate over repetitions
         for repetition = 1:num_repetitions
             % Construct the filename based on the current value and repetition number
-            file_path = find_emg_filename(directory,current, repetition,interpulse_duration);
+            muscle='RF'; %not used in this file but just to make the function find emg work
+            file_path = find_emg_filename(directory,muscle,current, repetition,interpulse_duration);
             
             % Load the file
             emg_struct = load(file_path);
@@ -103,14 +106,16 @@ for dir_index = 1:numel(directories)
             end
             [response, p2p_amplitude] = Signal_analysis(t_0, double(emg), sf, selected_filters, false, false, 1, false, paper_nb, interpulse_duration*1000,bool_plot_MEP, numberOfValues);
             amplitudes_all_reps(repetition) = p2p_amplitude;
-            responses_all_reps(repetition) = response;
+            responses_all_reps(repetition) = response2binary({response});
 
 
         end
         % Calculate mean and standard deviation
         amplitudes_all_dir{dir_index, current_index} = mean(amplitudes_all_reps);
         amplitude_std_all_dir{dir_index, current_index} = std(amplitudes_all_reps);
-        responses_all_dir{dir_index, current_index} = binary2response(round(mean(response2binary(responses_all_reps)))); % it will save reflex response or not reflex response based on the average responses
+        %responses_all_dir{dir_index, current_index} = binary2response(round(mean(responses_all_reps))); % it will save reflex response or not reflex response based on the average responses
+        responses_all_dir{dir_index, current_index} = round(mean(responses_all_reps)); % it will save 1 : reflex response or 0 : not reflex response based on the average responses
+
     end
 
     %HERE WE SHOULD STOCK THE INFORMATION TO COMPARE FOR EACH DIRECTORY :
@@ -122,5 +127,7 @@ if bool_plot == true
     show_std = false;
     plot_recruitement_curve(directories,amplitudes_all_dir,amplitude_std_all_dir,show_std,current_i,current_f)
 end
+responses_all_dir
+amplitudes_all_dir
 end
 
