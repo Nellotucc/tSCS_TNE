@@ -68,6 +68,9 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
     if search_range{1} <1
         search_range{1} =1;
     end
+    if search_range{2}>numberOfValues
+        search_range{2} = numberOfValues;
+    end
     %[peaks, locations] = findpeaks(abs_emg(t_0 + 10:t_0 + interpulse_duration + 200), "NPeaks", 4, "MinPeakDistance", 20,"MinPeakHeight",noise_threshold_peak); % take the 4 highest peak that have min distance of 10
     [peaks, locations] = findpeaks(abs_emg(search_range{1}:search_range{2}), "MinPeakDistance", 20,"MinPeakHeight",noise_threshold_peak); % take the peaks that have min distance of 20 and are above threshold
 

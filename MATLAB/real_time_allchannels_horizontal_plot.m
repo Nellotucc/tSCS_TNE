@@ -195,7 +195,8 @@ for j = 1: numberOfcurrents    % Need to be increased
             % Subplot 1 for Signal
             %subplot(2, numberOfchannels, (k-1)*2 + 1);
             subplot('Position', signalPosition);
-            [response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+            %[response,p2p_amplitude] = ActionPotDetectDoublePulse3(updated_t_0,EMG_preprocessed, interpulse_duration/1000,norm_factor_afterfilter,bool_plot_MEP,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+            [response,p2p_amplitude] = Signal_analysis(updated_t_0,(double(emg_data(k,:)))',sf,selected_filters, 0, plot_chs, selectedChannels{k}, bool_plot_PSD, paper_nb, interpulse_duration, bool_plot_MEP,numberOfValues);
             title(['Signal of ', channelNames{k}]);
 
             all_responses{j, i,k} = response;  
@@ -212,7 +213,7 @@ for j = 1: numberOfcurrents    % Need to be increased
             fprintf('Response for current %d, repetition %d, channel %d: %s\n', current, i, k,response);
             % Save the data in the 'DATA' folder
 
-            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000)));
+            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s_t0%d.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000),int(updated_t_0)));
             save(filename, 'emg'); % saving raw data
         end
 

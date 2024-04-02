@@ -14,4 +14,4 @@ num_repetitions = 2;
 bool_plot = true;
 interpulse_duration = 100;
 
-x = best_electrode_finder(directories,current_i,current_f,interpulse_duration,num_repetitions,'conventional',bool_plot);
+x = best_electrode_finder(directories,current_i,current_f,interpulse_duration,num_repetitions,'conventional',bool_plot,true);

@@ -2,9 +2,10 @@
 % MUSCLE
 %needs manual adjustements based on the data file since we recorded with
 %different names at the beginning
+%other problem is the t_0 plugged in assumes that no other artifact is
+%bigger than the t_0. We need to save the t_0 in the file name.
 
-
-function [best_electrode] = best_electrode_finder(directories,current_i, current_f,interpulse_duration, num_repetitions,muscle, bool_plot)
+function [best_electrode] = best_electrode_finder(directories,current_i, current_f,interpulse_duration, num_repetitions,muscle, bool_plot,control)
 % This function return the best electrode (file path for now) for
 % activating the muscles. It can be either muscle specific or conventional.
 %
@@ -35,8 +36,11 @@ end
 % EMG preprocessing
 selected_filters = 3;
 paper_nb = 1;
-
-
+if control == true
+    bool_plot_MEP = true;
+else
+    bool_plot_MEP = false;
+end
 num_currents = (current_f - current_i) / 5 + 1;
 
 % Initialize a cell array to store all the EMG data properties : amplitude,
@@ -53,7 +57,7 @@ num_currents = (current_f - current_i) / 5 + 1;
 
 amplitudes_all_dir = cell(numel(directories),num_currents);
 amplitude_std_all_dir = cell(numel(directories),num_currents);
-
+responses_all_dir = cell(numel(directories),num_currents);
 % Iterate over directories
 for dir_index = 1:numel(directories)
     directory = directories{dir_index};
@@ -62,16 +66,14 @@ for dir_index = 1:numel(directories)
     for current_index = 1:num_currents
         current = current_i + (current_index - 1) * 5; % Compute current value
         amplitudes_all_reps = zeros(1, num_repetitions);
+        responses_all_reps = cell(1, num_repetitions);
 
         % Iterate over repetitions
         for repetition = 1:num_repetitions
             % Construct the filename based on the current value and repetition number
+            file_path = find_emg_filename(directory,current, repetition,interpulse_duration);
             
-            %filename = sprintf('emg_current%d_repetition%d_window5s_interpulse50.mat', current, repetition+1);
-            filename = sprintf('emg_current%d_repetition%d_5.0window_100interpulse.mat', current, repetition+1);
-            %emg_current25_repetition2_5.0swindow_100interpulse.mat
             % Load the file
-            file_path = fullfile(directory, filename);
             emg_struct = load(file_path);
 
             % Get the list of variable names inside the structure array
@@ -80,17 +82,35 @@ for dir_index = 1:numel(directories)
             % Access the first variable
             emg = emg_struct.(variable_names{1});
             numberOfValues = length(emg);
-            [~, t_0] = max(abs(emg));
 
-            [response, p2p_amplitude] = Signal_analysis(t_0, double(emg), sf, selected_filters, false, false, 1, false, paper_nb, interpulse_duration*1000, false, numberOfValues);
+            % When possible extract the t_0 directly from the file name
+
+            % Find the index of '_t0'
+            t0_index = strfind(file_path, '_t0');
+
+            % Extract the t0 part
+            if ~isempty(t0_index)
+                t0_str = file_path(t0_index+3:end-4); % Extract from after '_t0' to before '.mat'
+                t_0 = str2double(t0_str); % Convert the extracted string to a numeric value
+            else
+                %disp('The file name does not contain "_t0" substring.');
+                [~, t_0] = max(abs(emg));
+
+            end
+
+            if bool_plot_MEP == true
+                figure;
+            end
+            [response, p2p_amplitude] = Signal_analysis(t_0, double(emg), sf, selected_filters, false, false, 1, false, paper_nb, interpulse_duration*1000,bool_plot_MEP, numberOfValues);
             amplitudes_all_reps(repetition) = p2p_amplitude;
+            responses_all_reps(repetition) = response;
 
 
         end
         % Calculate mean and standard deviation
         amplitudes_all_dir{dir_index, current_index} = mean(amplitudes_all_reps);
         amplitude_std_all_dir{dir_index, current_index} = std(amplitudes_all_reps);
-
+        responses_all_dir{dir_index, current_index} = binary2response(round(mean(response2binary(responses_all_reps)))); % it will save reflex response or not reflex response based on the average responses
     end
 
     %HERE WE SHOULD STOCK THE INFORMATION TO COMPARE FOR EACH DIRECTORY :
