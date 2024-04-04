@@ -2,18 +2,16 @@ clear all;
 clc;
 close all;
 
-selectedChannels = {1};
-sf = 1000;
-interpulse_duration = 100; % us - ms --- for Double pulse. 
-current = 65;
-numberOfValues = 5000;
-% EMG preprocessing
-plot_chs = true;
-bool_plot_PSD = false;
-selected_filters = 3;
-paper_nb = 1;
-
-
+% selectedChannels = {1};
+% sf = 1000;
+% interpulse_duration = 100; % us - ms --- for Double pulse. 
+% current = 65;
+% numberOfValues = 5000;
+% % EMG preprocessing
+% plot_chs = true;
+% bool_plot_PSD = false;
+% selected_filters = 3;
+% paper_nb = 1;
 
 % 
 % emg_1 = load ('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\22march\emg_current20_repetition1_5.0swindow_100interpulse.mat');
@@ -30,9 +28,11 @@ paper_nb = 1;
 % [norm_factor_afterfilter, EMG_preprocessed] = EMG_preprocessing((double(emg_data))', sf, selected_filters, 0, plot_chs, selectedChannels, bool_plot_PSD, paper_nb); %preprocess
 % 
 % emg_data = EMG_preprocessed;
-emg_data = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\20march\black2\45-50-50ip\full_emg_3.mat');
 
-emg_data = emg_data.emg_data_3;
+
+emg_data = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\DOME\30Hz\L1-L2\full_emg_TA_R_15-20.mat');
+
+emg_data = emg_data.emg_data;
 emg_for_training=emg_data(1,1:10000);
 ACSR_window=200;
 
@@ -47,13 +47,13 @@ subplot(2,1,2);
     xlabel('Time [s]');ylabel('Amplitude [mV]');
     title('Filtered','fontsize',12,'fontweight','bold');
 
-%%
-interpulse_duration = 50; % us - ms --- for Double pulse. 
-
-bool_plot_MEP = true;
-bool_colour_response = true;
-updated_t_0 = 11200;
-muscleLocations = {'distal'};
-
-response = ActionPotDetectDoublePulse3(updated_t_0,muscleLocations{1},emg_filtered',sf, interpulse_duration,1,bool_plot_MEP,bool_colour_response,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
-disp(response)
+% %%
+% interpulse_duration = 50; % us - ms --- for Double pulse. 
+% 
+% bool_plot_MEP = true;
+% bool_colour_response = true;
+% updated_t_0 = 11200;
+% muscleLocations = {'distal'};
+% 
+% response = ActionPotDetectDoublePulse3(updated_t_0,muscleLocations{1},emg_filtered',sf, interpulse_duration,1,bool_plot_MEP,bool_colour_response,numberOfValues); %find response 'no response', 'MEP reflex', 'M-wave', 'invalid'
+% disp(response)

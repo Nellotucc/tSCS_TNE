@@ -33,7 +33,7 @@ bool_plot_MEP = true;
 
 % Saving folder
 
-folderPath = 'DATA/tbd/nm';
+folderPath = 'DATA/DOME/Double_Pulse';
 if ~exist(folderPath, 'dir')
     mkdir(folderPath);
 end
@@ -68,7 +68,7 @@ SetSingleChanAllParam_v2(s, 0, ...
 SetSingleChanSingleParam_v2(s, 0, 7, 0) % Trigger mode (7), Output
 SetSingleChanState(s, 0, 1, 0, 0) %  Output disabled
 %%
-current = 40;
+current = 15;
 
 SetSingleChanAllParam_v2(s, 0, ...
                         pulse_width, ...    % pulseDurationUS
@@ -89,7 +89,7 @@ SetSingleChanSingleParam_v2(s, 0, 9, 1);
 
 
 % BEGGINING OF REAL TIME
-current_0 = 15; %set the current to start the loop with.
+current_0 = 50; %set the current to start the loop with.
 real_time_channels = selectedChannels; % set the real time channel
 
 numberOfrepetitions = 3; %i value
@@ -126,12 +126,12 @@ subplotHeight_response = subplotHeight;
 
 numberOfValues = 5000;
 
-current_initial = 15; % small comfortable current to only see artifact
-%SetSingleChanSingleParam(s, 0, 6, current_initial);
+current_initial = 40; % small comfortable current to only see artifact
+SetSingleChanSingleParam(s, 0, 6, current_initial);
 
-%SetSingleChanState(s, 0, 1, 1, 0); % activate High Voltage
+SetSingleChanState(s, 0, 1, 1, 0); % activate High Voltage
 pause(2)
-%SetSingleChanState(s, 0, 1, 1, 1); % activate output
+SetSingleChanState(s, 0, 1, 1, 1); % activate output
 
 start_time = tic;
 
@@ -147,13 +147,13 @@ emg_removed = getDataFromChannels(real_time_channels,sf,40000); % remove availab
 
 pause(0.920); % pause accounts for delay when sending the next command SetSingleChanSingleParam_v2(s, 0, 9, 1). Based on tests.
 
-%SetSingleChanSingleParam_v2(s, 0, 9, 1);
+SetSingleChanSingleParam_v2(s, 0, 9, 1);
 
 pause(5)
 
 for j = 1: numberOfcurrents    % Need to be increased
     current =  current_0 + (j-1)*5; % mA, it will start the first 3 repetitions at current_0
-    %SetSingleChanSingleParam(s, 0, 6, current)
+    SetSingleChanSingleParam(s, 0, 6, current)
     
     clf; % change for multiple currents like add a figure or something
     for i = 1: numberOfrepetitions  % Number of repetitions
@@ -212,7 +212,7 @@ for j = 1: numberOfcurrents    % Need to be increased
 
             fprintf('Response for current %d, repetition %d, channel %d: %s\n', current, i, k,response);
             % Save the data in the 'DATA' folder
-            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s_t0%d.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000),int(updated_t_0)));
+            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s_t0%d.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000),double(updated_t_0)));
             save(filename, 'emg'); % saving raw data
 
         end
@@ -226,6 +226,6 @@ for j = 1: numberOfcurrents    % Need to be increased
     
     
 end
-%SetSingleChanState(s, 0, 1, 0, 0);
+SetSingleChanState(s, 0, 1, 0, 0);
 
 disp("END")
