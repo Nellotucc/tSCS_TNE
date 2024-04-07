@@ -1,5 +1,5 @@
 % FOR C 50 IN FOLDER MARCH ITS PRESUMED M WAVE, WHAT DO YOU THINK ??
-
+clear all;
 
 
 folder = '15march\';
@@ -27,15 +27,15 @@ bool_colour_response = false;
 muscleLocations = {'distal'};
 t_0 = 1000;
 %% Single Load
-emg_1 = load('/Users/riccardocarpineto/Documents/TNE_MA2/tSCS_TNE/MATLAB/DATA/Kelly/small_electrode/yellow2/emg_current30_repetition1_window5s_interpulse50.mat');
+emg_1 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\Kelly\small_electrode\yellow2\emg_current30_repetition1_window5s_interpulse50.mat');
 emg_1 = emg_1.emg_data;
 figure;
 plot(emg_1)
 figure;
-[~, t_0] = max(abs(emg));
-disp(t_0)
+[~, t_0] = max(abs(emg_1));
+disp(t_0);
 [response,p2p_amplitude] = Signal_analysis(t_0,double(emg_1),sf,selected_filters, 0, plot_chs, selectedChannels{1}, bool_plot_PSD, paper_nb, interpulse_duration*1000, bool_plot_MEP,numberOfValues);
-p2p_amplitude
+p2p_amplitude;
 %% Many loads
 % Initialize a cell array to store all the loaded EMG data
 current_i = 25;

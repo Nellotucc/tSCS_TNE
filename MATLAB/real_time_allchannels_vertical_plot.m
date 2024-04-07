@@ -1,3 +1,5 @@
+clear all;
+clc;
 %% Imports
 addpath(genpath('NewBoardTest')); % for stimulator
 addpath(genpath('MEP_Detection'));  %to have the MEP functions
@@ -10,7 +12,7 @@ ComPort        = 'COM28';
 Baudrate       = 115200*8;   %921600
  
 run('OpenComPort.m'); %
-clc;
+
 %% SET PARAMETERS for recording
 
 selectedChannels = {0,1,2,3,4,5}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
@@ -33,7 +35,7 @@ bool_plot_MEP = true;
 
 % Saving folder
 
-folderPath = 'DATA/DOME/Double_Pulse';
+folderPath = 'DATA/LORENZO/electrode1';
 if ~exist(folderPath, 'dir')
     mkdir(folderPath);
 end
@@ -68,7 +70,7 @@ SetSingleChanAllParam_v2(s, 0, ...
 SetSingleChanSingleParam_v2(s, 0, 7, 0) % Trigger mode (7), Output
 SetSingleChanState(s, 0, 1, 0, 0) %  Output disabled
 %%
-current = 15;
+current = 10;
 
 SetSingleChanAllParam_v2(s, 0, ...
                         pulse_width, ...    % pulseDurationUS
@@ -82,6 +84,8 @@ SetSingleChanAllParam_v2(s, 0, ...
 SetSingleChanState(s, 0, 1, 1, 1);
 %%
 SetSingleChanSingleParam_v2(s, 0, 9, 1);
+%%
+SetSingleChanState(s, 0, 1, 0, 0);
 
 %% REAL TIME DATA ACQUISISTION
 %params to tune each time : current_0 and real_time_channel
@@ -89,7 +93,7 @@ SetSingleChanSingleParam_v2(s, 0, 9, 1);
 
 
 % BEGGINING OF REAL TIME
-current_0 = 50; %set the current to start the loop with.
+current_0 = 10; %set the current to start the loop with.
 real_time_channels = selectedChannels; % set the real time channel
 
 numberOfrepetitions = 3; %i value
@@ -126,7 +130,7 @@ subplotHeight_response = subplotHeight;
 
 numberOfValues = 5000;
 
-current_initial = 40; % small comfortable current to only see artifact
+current_initial = 10; % small comfortable current to only see artifact DONT CHANGE IT
 SetSingleChanSingleParam(s, 0, 6, current_initial);
 
 SetSingleChanState(s, 0, 1, 1, 0); % activate High Voltage
