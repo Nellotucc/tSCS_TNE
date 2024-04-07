@@ -156,7 +156,7 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
         search_pos_end_1 = max(1, min(search_pos_end_1, numel(emg_data)));
 
         search_pos_begin_2 = search_pos_begin_1+interpulse_duration-10; %in theory this should start a bit before the second response
-        search_pos_end_2 = search_pos_begin_2+40;   % range around stim pulse 2
+        search_pos_end_2 = search_pos_begin_2+50;   % range around stim pulse 2
         search_pos_begin_2 = max(1, min(search_pos_begin_2, numel(emg_data)));
         search_pos_end_2 = max(1, min(search_pos_end_2, numel(emg_data)));
 
@@ -335,7 +335,6 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
             % Add two straight lines for the p2p amplitude of pulse
             h6 = plot([search_pos_begin_1+10, search_pos_begin_1+10], [p2p_amplitude_1, 0], 'k-', 'LineWidth', 2);
             h7 = plot([search_pos_begin_2+10, search_pos_begin_2+10], [p2p_amplitude_2, 0], 'k-', 'LineWidth', 2);
-                    
             % Add legend
             %legend([h1, h2, h3, h4, h5, h6, h7, h8], 'EMG signal', 'threshold', '6*std noise', 'suppression level threshold', 'amplitude threshold', 'P2P peak 1', 'P2P peak 1', 'T 0');
         else
@@ -354,10 +353,12 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
             x_line = linspace(double(search_range{1})-double(start_window),double(search_range{2})-double(start_window)); % Adjust the range as needed
             h2 = plot(x_line, ones(size(x_line)) * y_line, 'r--', 'LineWidth', 1);
             %legend([h1, h8], 'EMG signal','T 0');
+           
 
         end
         grid on;
-    
+        uistack(h1, 'top');
+
 
         % Customize plot
         title('EMG signal');
