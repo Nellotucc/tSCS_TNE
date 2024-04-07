@@ -276,13 +276,13 @@ function [response,top_location] = ActionPotDetectDoublePulse3(t_0,emg_data,inte
 
         % add a patch for the search range of first pulse;
         patch([search_range{1}-start_window, search_range{2}-start_window,search_range{2}-start_window ,search_range{1}-start_window], ...
-            [1.2*min(emg_data), 1.2*min(emg_data), 1.2*max(emg_data), 1.2*max(emg_data)], 'b', 'FaceAlpha', 0.1);
+            [1.2*min(emg_data), 1.2*min(emg_data), 1.2*max(emg_data), 1.2*max(emg_data)], 'b', 'FaceAlpha', 0.2);
         
 
         
         %bool_found = true; % for testing, can cause bugs if no peaks are detected 
         % it wont have search pos begin 1
-       
+        
         if bool_found % only all the lines and legends if MEP detected
             % Add a straight line for noise threshold
             y_line = noise_threshold;
