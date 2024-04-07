@@ -222,7 +222,7 @@ for j = 1: numberOfcurrents    % Need to be increased
 
             fprintf('Response for current %d, repetition %d, channel %d: %s\n', current, i, k,response);
             % Save the data in the 'DATA' folder
-            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s_t0%d.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000),double(updated_t_0)));
+            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s_t0%d.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000),round(updated_t_0)));
             save(filename, 'emg'); % saving raw data
 
         end
