@@ -13,8 +13,8 @@ run('OpenComPort.m'); %
 clc;
 %% SET PARAMETERS for recording
 
-selectedChannels = {0,1,2,3,4,5}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
-channelNames = {'SO_R','SO_L','TA_R','TA_L','RF_R','RF_L'};
+selectedChannels = {0,1,2,3,4,5,6}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
+channelNames = {'SO_R','SO_L','TA_R','TA_L','RF_R','RF_L','ST_R'};
 
 % selectedChannels = {0,1}; % channel to record from, multiple channels will be used later. Channel 0 here is channel 1 on BIOMETRICS
 % channelNames = {'SO_R','SO_L'};
@@ -33,7 +33,7 @@ bool_plot_MEP = true;
 
 % Saving folder
 
-folderPath = 'DATA/tbd/nm';
+folderPath = 'DATA/DOME/Double_Pulse';
 if ~exist(folderPath, 'dir')
     mkdir(folderPath);
 end
@@ -68,7 +68,7 @@ SetSingleChanAllParam_v2(s, 0, ...
 SetSingleChanSingleParam_v2(s, 0, 7, 0) % Trigger mode (7), Output
 SetSingleChanState(s, 0, 1, 0, 0) %  Output disabled
 %%
-current = 40;
+current = 15;
 
 SetSingleChanAllParam_v2(s, 0, ...
                         pulse_width, ...    % pulseDurationUS
@@ -89,11 +89,11 @@ SetSingleChanSingleParam_v2(s, 0, 9, 1);
 
 
 % BEGGINING OF REAL TIME
-current_0 = 15; %set the current to start the loop with.
+current_0 = 25; %set the current to start the loop with.
 real_time_channels = selectedChannels; % set the real time channel
 
 numberOfrepetitions = 3; %i value
-numberOfcurrents = 1; %j value
+numberOfcurrents = 2; %j value
 numberOfchannels = length(real_time_channels);
 
 all_responses = cell(numberOfcurrents, numberOfrepetitions,numberOfchannels); % jxixn array of responses
@@ -213,7 +213,7 @@ for j = 1: numberOfcurrents    % Need to be increased
             fprintf('Response for current %d, repetition %d, channel %d: %s\n', current, i, k,response);
             % Save the data in the 'DATA' folder
 
-            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s_t0%d.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000),int(updated_t_0)));
+            filename = fullfile(folderPath, sprintf('emg_channel%s_current%d_repetition%d_window%ss_interpulse%s_t0%d.mat', channelNames{k},current,i,num2str(numberOfValues/sf),num2str(interpulse_duration/1000),double(updated_t_0)));
             save(filename, 'emg'); % saving raw data
         end
 

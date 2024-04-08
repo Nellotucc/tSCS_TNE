@@ -12,6 +12,7 @@ function dataHarvester(directories,current_i, current_f,interpulse_duration, num
 % num_repetitinos : number of repetitions
 % muscles : array of muscles we want to iterate on ['RF_L','RF_R','SO_L'...]
 % bool_plot : to plot the recruitement curve
+%control : to plot the response for each repetition (true or false)
 %
 % OUTPUTS :
 % best_electrode : directory name of the best found electrode
@@ -21,6 +22,7 @@ function dataHarvester(directories,current_i, current_f,interpulse_duration, num
 
 
 % initial parameters
+
 sf = 1000;
 if interpulse_duration>1000
     interpulse_duration = interpulse_duration/1000;
@@ -98,7 +100,8 @@ for dir_index = 1:numel(directories)
                 end
 
                 if bool_plot_MEP == true
-                    figure;
+                    figName = sprintf('Plot of muscle %s for current %d and repetition %d in directory %s',muscle,current, repetition,directory);
+                    figure('Name',figName);
                 end
                 [response, p2p_amplitude] = Signal_analysis(t_0, double(emg), sf, selected_filters, false, false, 1, false, paper_nb, interpulse_duration*1000,bool_plot_MEP, numberOfValues);
                 amplitudes_all_reps(repetition) = p2p_amplitude;
@@ -109,7 +112,11 @@ for dir_index = 1:numel(directories)
 
             end
             % Calculate mean, standard deviation and response
-            amplitudes_all_dir{dir_index,muscle_index, current_index} = mean(amplitudes_all_reps);
+            if sum(responses_all_reps) == 0
+                amplitudes_all_dir{dir_index,muscle_index, current_index} = 0;
+            else
+                amplitudes_all_dir{dir_index,muscle_index, current_index} = sum(amplitudes_all_reps)/sum(responses_all_reps);
+            end
             amplitude_std_all_dir{dir_index,muscle_index, current_index} = std(amplitudes_all_reps);
             responses_all_dir{dir_index,muscle_index, current_index} = round(mean(responses_all_reps)); % it will save 1 : reflex response or 0 : not reflex response based on the average responses
 
@@ -128,7 +135,7 @@ for muscle_index = 1:numel(muscles)
         show_std = false;
         amplitudes = amplitudes_all_dir(:,muscle_index,:);
         amplitudes_std = amplitude_std_all_dir(:,muscle_index,:);
-        plot_recruitement_curve(directories,amplitudes,amplitudes_std,show_std,current_i,current_f)
+        plot_recruitement_curve(directories,amplitudes,amplitudes_std,show_std,current_i,current_f,muscle)
     end
 end
 end
