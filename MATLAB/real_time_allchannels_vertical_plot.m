@@ -62,11 +62,10 @@ current_f = 50; %mA : Final current
 real_time_channels = selectedChannels; % set the real time channel
 current_step = 5; %mA : steps of the current ex: current_step = 5 : 10--15--20...
 numberOfrepetitions = 3; %i value
-
 %numberOfcurrents = 2; %j value, increased by steps of current_step
 numberOfcurrents = round((current_f-current_0)/current_step); %j value, increased by steps of current_step (ATTENTION current_f-current_step should be multiples of current_step. ROUND is added in case they are not.
-
 numberOfchannels = length(real_time_channels);
+
 %% SET CONSTANTS
 %Don't change these values unless big modification is made
 current_initial = 10; % small comfortable current before the loop
@@ -258,10 +257,3 @@ for electrode_number = 1:numberOfelectrodes
 end
 
 disp("END")
-%%
-while true
-    emg_removed = getDataFromChannels(real_time_channels,sf,40000); % remove available samples before recording
-    pause(5)
-    disp("GOOD")
-end
-
