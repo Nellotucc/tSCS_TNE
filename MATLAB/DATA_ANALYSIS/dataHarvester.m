@@ -103,6 +103,11 @@ for dir_index = 1:numel(directories)
                     figName = sprintf('Plot of muscle %s for current %d and repetition %d in directory %s',muscle,current, repetition,directory);
                     figure('Name',figName);
                 end
+
+                figName = sprintf('plot current %d',current);
+                figure('Name',figName);
+                plot(emg);
+
                 [response, p2p_amplitude] = Signal_analysis(t_0, double(emg), sf, selected_filters, false, false, 1, false, paper_nb, interpulse_duration*1000,bool_plot_MEP, numberOfValues);
                 amplitudes_all_reps(repetition) = p2p_amplitude;
                 responses_all_reps(repetition) = response2binary({response});
@@ -127,15 +132,31 @@ for dir_index = 1:numel(directories)
     %HERE WE SHOULD STOCK THE INFORMATION TO COMPARE FOR EACH DIRECTORY :
 
 end
-for muscle_index = 1:numel(muscles)
-    muscle = muscles{muscle_index};
+if bool_plot == true
+    num_muscles = numel(muscles);
+    
+    % Determine the layout of subplots based on the number of muscles
+    rows = ceil(sqrt(num_muscles));
+    cols = ceil(num_muscles / rows);
 
+    % Create a new figure
+    figure;
+    
+    for muscle_index = 1:num_muscles
+        muscle = muscles{muscle_index};
 
-    if bool_plot == true
         show_std = false;
-        amplitudes = amplitudes_all_dir(:,muscle_index,:);
-        amplitudes_std = amplitude_std_all_dir(:,muscle_index,:);
-        plot_recruitement_curve(directories,amplitudes,amplitudes_std,show_std,current_i,current_f,muscle)
+        amplitudes = amplitudes_all_dir(:, muscle_index, :);
+        amplitudes_std = amplitude_std_all_dir(:, muscle_index, :);
+        
+        % Create a subplot for each muscle
+        subplot(rows, cols, muscle_index);
+        
+        % Plot the recruitment curve in the subplot
+        plot_recruitement_curve(directories, amplitudes, amplitudes_std, show_std, current_i, current_f)
+        
+        % Add a title for the subplot
+        title(muscle);
     end
 end
 end

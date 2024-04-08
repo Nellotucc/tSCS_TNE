@@ -1,9 +1,8 @@
-function plot_recruitement_curve(directories,amplitudes_all_dir,amplitude_std_all_dir,show_std,current_i,current_f,muscle)
+function plot_recruitement_curve(directories,amplitudes_all_dir,amplitude_std_all_dir,show_std,current_i,current_f)
 %PLOT_RECRUITEMENT_CURVE Summary of this function goes here
 
     % Initialize figure
-    figName = sprintf('Recruitement curve of %s',muscle);
-    figure('Name',figName);
+    
     hold on;
 
     % Colors for shading

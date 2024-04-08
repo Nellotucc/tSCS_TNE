@@ -34,8 +34,8 @@ bool_plot = true;
 interpulse_duration = 50;
 control = false;
 
-muscles = {'RF_L','RF_R','SO_L','SO_R','TA_L','TA_R'};
-%muscles = {'SO_L'};
+%muscles = {'RF_L','RF_R','SO_L','SO_R','TA_L','TA_R'};
+muscles = {'SO_L'};
 dataHarvester(directories,current_i,current_f,interpulse_duration,num_repetitions,muscles,bool_plot,control);
 
 %%
