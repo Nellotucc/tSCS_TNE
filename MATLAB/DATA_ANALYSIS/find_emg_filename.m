@@ -2,7 +2,7 @@ function filename = find_emg_filename(directory,muscle,current, repetition,inter
  
     %% UNCOMMENT HERE FOR THE NEW DATA SAVING FORMAT
     %Construct the pattern to search for
-    pattern = sprintf('emg_channel%s_current%d_repetition%d_window5s_interpulse%d_t0*.mat',muscle,current, repetition+1,interpulse_duration);
+    pattern = sprintf('emg_channel%s_current%d_repetition%d_window*s_interpulse%d_t0*.mat',muscle,current, repetition,interpulse_duration);
     % Search for files matching the pattern
     files = dir(fullfile(directory,pattern));    
     disp(pattern);

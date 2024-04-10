@@ -1,4 +1,4 @@
-function f = create_figure()
+function f = create_figure(bool_recording)
     %CREATE_FIGURE Summary of this function goes here
     %   Detailed explanation goes here
     
@@ -19,7 +19,10 @@ function f = create_figure()
 
     % Calculate the figure size as a fraction of the screen size
     figureWidthFraction = 0.6;  % 60% of screen width
-    figureHeightFraction = 0.8; % 60% of screen height
+    figureHeightFraction = 0.8; % 80% of screen height
+
+    figureWidthFraction = 1;  % 60% of screen width
+    figureHeightFraction = 0.85; % 80% of screen height
 
     figWidth = screenWidth * figureWidthFraction;
     figHeight = screenHeight * figureHeightFraction;
@@ -31,15 +34,15 @@ function f = create_figure()
     % Set figure position and size
     f.Position = [posX, posY, figWidth, figHeight];
 
-
-    % Add text annotation for recording message
-    recordingMsg = 'Recording in Progress...';
-    annotation('textbox', [0.4, 0.4, 0.2, 0.1], 'String', recordingMsg, ...
-        'FontSize', 16, 'FontWeight', 'bold', 'LineStyle', '-', ...
-        'EdgeColor', 'k', 'LineWidth', 1.5, ...
-        'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', ...
-        'Color', 'r', 'BackgroundColor', 'w');
-
+    if bool_recording
+        %Add text annotation for recording message
+        recordingMsg = 'Recording in Progress...';
+        annotation('textbox', [0.4, 0.4, 0.2, 0.1], 'String', recordingMsg, ...
+            'FontSize', 16, 'FontWeight', 'bold', 'LineStyle', '-', ...
+            'EdgeColor', 'k', 'LineWidth', 1.5, ...
+            'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', ...
+            'Color', 'r', 'BackgroundColor', 'w');
+    end
 
     
     % % Make the figure visible

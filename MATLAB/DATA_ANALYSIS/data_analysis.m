@@ -25,17 +25,17 @@ clear;
 % format ex :
 % emg_channelRF_L_current20_repetition1_window5s_interpulse50.mat
 % emg_channelRF_L_current15_repetition2_window5s_interpulse50_t03987.mat
-directories = {'C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\DOME\Double_Pulse'};
+directories = {'C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\DOME\4april\2swindow\electrode2','C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\DOME\4april\3swindow\electrode2','C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\DOME\4april\electrode2'};
 
 current_i = 25;
-current_f = 60;
-num_repetitions = 2;
+current_f = 45;
+num_repetitions = 3;
 bool_plot = true;
 interpulse_duration = 50;
 control = false;
 
-%muscles = {'RF_L','RF_R','SO_L','SO_R','TA_L','TA_R'};
-muscles = {'SO_L'};
+muscles = {'RF_L','RF_R','SO_L','SO_R','TA_L','TA_R'};
+%muscles = {'SO_L'};
 dataHarvester(directories,current_i,current_f,interpulse_duration,num_repetitions,muscles,bool_plot,control);
 
 %%

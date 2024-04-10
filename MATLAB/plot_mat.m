@@ -28,7 +28,7 @@ muscleLocations = {'distal'};
 t_0 = 1000;
 %% Single Load
 clc;
-emg_1 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\Kelly\small_electrode\yellow2\emg_current30_repetition2_window5s_interpulse50.mat');
+emg_1 = load('C:\Users\local_B216353\Documents\tSCS\tSCS_TNE\MATLAB\DATA\Kelly\small_electrode\yellow2\emg_current55_repetition2_window5s_interpulse50.mat');
 emg_1 = emg_1.emg_data;
 figure;
 plot(emg_1)

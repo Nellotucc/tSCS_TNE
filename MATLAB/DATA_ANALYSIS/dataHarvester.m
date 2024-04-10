@@ -54,6 +54,8 @@ amplitude_std_all_dir = cell(numel(directories),numel(muscles),num_currents);
 responses_all_dir = cell(numel(directories),numel(muscles),num_currents);
 % Iterate over directories
 for dir_index = 1:numel(directories)
+    disp("DIRECTORY")
+    disp(dir_index)
     directory = directories{dir_index};
 
 
@@ -103,10 +105,10 @@ for dir_index = 1:numel(directories)
                     figName = sprintf('Plot of muscle %s for current %d and repetition %d in directory %s',muscle,current, repetition,directory);
                     figure('Name',figName);
                 end
-
-                figName = sprintf('plot current %d',current);
-                figure('Name',figName);
-                plot(emg);
+                % 
+                % figName = sprintf('plot current %d',current);
+                % figure('Name',figName);
+                % plot(emg);
 
                 [response, p2p_amplitude] = Signal_analysis(t_0, double(emg), sf, selected_filters, false, false, 1, false, paper_nb, interpulse_duration*1000,bool_plot_MEP, numberOfValues);
                 amplitudes_all_reps(repetition) = p2p_amplitude;
